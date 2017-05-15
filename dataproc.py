@@ -4,7 +4,7 @@ Data processing instructions
 
 from sys import argv
 from instr import Instr
-from simparts import simCPU
+from loadelf import simCPU
 
 class DataProc(Instr):
     """
@@ -20,36 +20,26 @@ class DataProc(Instr):
         #is it an immediate or a register shift?
         self.bit_4 = self.bits >> 4 & 0x1
         #the variables that get determined based on the results of the above
-        self.imm_8 = 0
-        self.rot_imm = 0
-        self.shift = 0
-        self.shift_imm = 0
-        self.rs = 0
-        self.rm = 0
+        self.imm_8 = self.bits & 0xff
+        self.rot_imm = self.bits >> 8 & 0xf
+        self.shift = self.bits >> 5 & 0x3
+        self.shift_imm = self.bits >> 7 & 0x1f
+        self.rs = self.bits >> 8 & 0xf
+        self.rm = self.bits & 0xf
         #the pieces along the way that need to be determined
         self.is_32bit = False
         self.is_imm_shift = False
         self.is_reg_shift = False
         self.result = 0
 
-    def get_shift_op(self):
-        """determine what those last 12 bits are going to do"""
         #32-bit immediate operand 12
         if self.bit_i:
-            self.imm_8 = self.bits & 0xff
-            self.rot_imm = self.bits >> 8 & 0xf
             self.is_32bit = True
         #register shift operand 12
         elif self.bit_4:
-            self.rs = self.bits >> 8 & 0xf
-            self.shift = self.bits >> 5 & 0x3
-            self.rm = self.bits & 0xf
             self.is_reg_shift = True
         #immediate shift operand 12
         else:
-            self.shift_imm = self.bits >> 7 & 0x1f
-            self.shift = self.bits >> 5 & 0x3
-            self.rm = self.bits & 0xf
             self.is_imm_shift = True
 
     def set_result(self):
@@ -83,6 +73,7 @@ class DataProc(Instr):
                     self.result = val >> self.shift_imm
                     #clear shifted in bits
                     self.result &= self.make_mask(31 - self.shift_imm)
+            #rotate right
             elif self.shift == 0b11:
                 pass
         #shifting by value found in <rs>
@@ -108,6 +99,7 @@ class DataProc(Instr):
                     self.result = res_val >> shift_val
                     #clear shifted in bits
                     self.result &= self.make_mask(31 - shift_val)
+            #rotate right
             elif self.shift == 0b11:
                 pass
 
@@ -181,7 +173,6 @@ class DataProc(Instr):
 
 #method to execute the decoded instruction
     def i_execute(self):
-        self.get_shift_op()
         self.set_result()
         #check for MUL instruction
         if self.check_mul():

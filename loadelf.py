@@ -6,7 +6,11 @@ Set up the RAM and CPU
 Go
 """
 
-from simparts import simCPU, simRAM
+from sys import argv
+import cpu, ram
+
+simCPU = CPU()
+simRAM = RAM()
 
 def is_elf(in_file):
     """
@@ -19,3 +23,7 @@ def is_elf(in_file):
         return True
     else:
         return False
+
+if __name__ == "__main__":
+    pass
+    

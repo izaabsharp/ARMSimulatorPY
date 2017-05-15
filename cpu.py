@@ -1,7 +1,8 @@
 """
 Central Processing Unit
-Where the registers live and all methods for register
-    access/modification exist
+    registers
+    fetch/decode/execute cycle
+    instruction counter
 """
 
 from instr import Instr
@@ -28,3 +29,6 @@ class CPU:
     def cycle(self):
         self.decode()
         self.execute()
+
+if __name__ == "__main__":
+    pass

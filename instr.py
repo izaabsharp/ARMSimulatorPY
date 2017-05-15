@@ -1,5 +1,6 @@
 """
-Generic instruction class from which others inherit
+Generic instruction class 
+    from which instruction types inherit
 """
 
 class Instr:
@@ -33,3 +34,6 @@ class Instr:
         filled in by child instruction classes
         """
         pass
+
+if __name__ == "__main__":
+    pass

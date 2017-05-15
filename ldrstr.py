@@ -28,6 +28,7 @@ class LdrStr(Instr):
 
         #decode offset
         if self.offset_type:
+            #initial offset in <rm>
             self.offset = simCPU.regs[self.rm]
             if self.bits >> 4 & 0 != 0:
                 #logical shift left
@@ -51,22 +52,26 @@ class LdrStr(Instr):
         else:
             self.offset = self.bits & 0xfff
 
+        #positive or negative offset
+        if self.u == 0:
+            self.offset = -(self.offset)
+
         if self.p:
+            self.res_addr = self.base + self.offset
             if self.w:
                 simCPU.regs[self.rn] = self.res_addr
-            else:
-                pass
         else:
             self.res_addr = simCPU.regs[self.rn]
+            simCPU.regs[self.rn] += self.offset
 
 #load/store instructions
-    def i_ldr(self, mem_addr, reg):
+    def i_ldr(self):
         """loads a value from memory at <mem_addr> into register <reg>"""
-        simCPU.regs[reg] = simRAM.memory[mem_addr]
+        simCPU.regs[self.rd] = simRAM.memory[self.res_addr]
 
-    def i_str(self, mem_addr, reg):
+    def i_str(self):
         """stores a value from register <reg> into memory at <mem_addr>"""
-        simRAM.memory[mem_addr] = simCPU.regs[reg]
+        simRAM.memory[self.res_addr] = simCPU.regs[self.rd]
 
     def i_stm(self):
         pass

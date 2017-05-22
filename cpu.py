@@ -10,7 +10,7 @@ from instr import Instr
 class CPU:
     """The CPU class"""
     def __init__(self):
-        self.regs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.regs = (0, ) * 16
         self.instr_count = 0
 
     def fetch(self):

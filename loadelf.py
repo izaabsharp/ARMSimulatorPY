@@ -24,6 +24,12 @@ def is_elf(in_file):
     else:
         return False
 
-if __name__ == "__main__":
+def is_32(in_file):
     pass
+
+if __name__ == "__main__":
+    if len(argv) < 1:
+        print("usage: loadelf.py [file] ...")
+    else:
+        in_file = file.open(argv[1])
     
